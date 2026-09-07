@@ -23,6 +23,7 @@ Labs are located in the `labs/` directory and are numbered sequentially to refle
 | Lab 01 | `labs/lab01-basic-mcp` | ✅ Completed and validated | Basic MCP server with simulated threat intelligence: `check_ip` tool, `security://assets` resource, `investigate_ioc` prompt. Integrated with OpenCode via stdio. |
 | Lab 02 | `labs/lab02-threat-intel-api` | ⚠️ Implemented, MCP integration validated | MCP server wrapping the AbuseIPDB API: `check_ip` tool with real external API calls (pending API key configuration). Includes environment variable handling, input validation, timeout handling, and response normalization. |
 | Lab 03 | `labs/lab03-multiple-tools` | ✅ Implemented | MCP server exposing multiple cybersecurity tools: `check_ip`, `check_hash`, and `analyze_log`. Uses local deterministic logic and simulated data. Demonstrates tool selection by the LLM/agent. |
+| Lab 04 | `labs/lab04-dynamic-resources` | ✅ Completed and validated | MCP server demonstrating dynamic MCP Resources: static resources (`security://assets`, `security://events/recent`), resource template (`security://assets/{asset_id}`), and runtime-generated resource (`security://runtime/session`). Validated OpenCode consumption of MCP Resources, observed context reuse vs fresh reads, and documented security implications. |
 
 ## Setup Instructions
 

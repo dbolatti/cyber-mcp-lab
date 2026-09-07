@@ -26,6 +26,7 @@ Status: Validated
 - incidents
 - security policies
 - dynamic resources
+Status: Completed
 
 ## Lab 5 - Write / high-impact tools
 - block_ip

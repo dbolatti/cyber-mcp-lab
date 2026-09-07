@@ -24,16 +24,31 @@
   - Added input validation, timeout handling, sanitized error messages, and response normalization.
   - Real API call pending API key configuration.
 - **Lab 03**:
-   - Implemented `CyberSecurityMultiTool` MCP Server exposing three tools: `check_ip`, `check_hash`, and `analyze_log`.
-   - Used local deterministic logic and simulated data.
-   - Demonstrated tool selection by the LLM/agent.
-   - OpenCode configuration corrected for version 1.18.27 format.
-   - Validated reproducibility: successfully cloned/pulled repository and recreated local .venv on a different computer.
-   - MCP server correctly exposed the three tools.
-   - OpenCode using Nemotron 3 Super selected appropriate tools for IP reputation, malware hash, and SSH log analysis requests.
-   - A deliberately ambiguous prompt did not trigger a new MCP tool invocation because the result was already present in conversation context, showing that tool availability does not imply invocation and that LLMs may answer from existing context.
-   - This demonstrates distinctions between tool-derived evidence, conversation context, and LLM-generated inference.
-   - Future research topics: provenance, freshness, context contamination, auditability of agent decisions, evidence versus inference.
+    - Implemented `CyberSecurityMultiTool` MCP Server exposing three tools: `check_ip`, `check_hash`, and `analyze_log`.
+    - Used local deterministic logic and simulated data.
+    - Demonstrated tool selection by the LLM/agent.
+    - OpenCode configuration corrected for version 1.18.27 format.
+    - Validated reproducibility: successfully cloned/pulled repository and recreated local .venv on a different computer.
+    - MCP server correctly exposed the three tools.
+    - OpenCode using Nemotron 3 Super selected appropriate tools for IP reputation, malware hash, and SSH log analysis requests.
+    - A deliberately ambiguous prompt did not trigger a new MCP tool invocation because the result was already present in conversation context, showing that tool availability does not imply invocation and that LLMs may answer from existing context.
+    - This demonstrates distinctions between tool-derived evidence, conversation context, and LLM-generated inference.
+    - Future research topics: provenance, freshness, context contamination, auditability of agent decisions, evidence versus inference.
+
+- **Lab 04**:
+    - OpenCode successfully consumed MCP Resources using `read_mcp_resource`.
+    - Static Resources implemented: `security://assets` and `security://events/recent`.
+    - Resource Template implemented: `security://assets/{asset_id}`.
+    - Runtime-generated Resource added: `security://runtime/session`.
+    - `security://runtime/session` generates a UUID at runtime, proving that an MCP Resource can expose dynamically generated information.
+    - Experimental observation:
+        * First explicit MCP read: `read_mcp_resource` invoked, a runtime UUID returned.
+        * Repeating the same request: `read_mcp_resource` NOT invoked, previous UUID reused from conversation context.
+        * Explicitly requiring a fresh MCP read: `read_mcp_resource` invoked again, a different UUID returned.
+    - Conceptual conclusion: Dynamic Resource does not imply Fresh Read.
+    - Agent responses may originate from: a fresh MCP Resource read, previous conversation context, or LLM inference.
+    - Security implications: freshness of operational security data, provenance of evidence, context reuse, stale security information, auditability of MCP interactions.
+    - Relates to Lab 03: Tool availability does not imply Tool invocation. Resource availability does not imply Resource reading.
 
 ## OpenCode/AI-assisted Development Observations
 - Initial OpenCode-generated code often mixed low-level and high-level MCP APIs; more explicit technical prompts reduced this error.
