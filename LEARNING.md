@@ -50,6 +50,38 @@
     - Security implications: freshness of operational security data, provenance of evidence, context reuse, stale security information, auditability of MCP interactions.
     - Relates to Lab 03: Tool availability does not imply Tool invocation. Resource availability does not imply Resource reading.
 
+- **Lab 05**:
+    - MCP server providing a controlled read-only abstraction layer over a simulated SIEM dataset.
+    - Resources: `security://siem/events/recent` (recent events) and `security://siem/events/{event_id}` (specific event by ID).
+    - Tools: `search_events` (query events with filters) and `get_security_summary` (calculated summary of event severities and counts).
+    - Important design decisions:
+        * One central SIEM dataset is shared by Resources and Tools.
+        * Read-only interface; no remediation actions.
+        * No direct SIEM access by the LLM; all interaction via MCP.
+        * No arbitrary query language; only defined search_events tool.
+        * No shell execution.
+        * Deterministic security summary calculated in Python.
+        * Severity normalization and controlled validation.
+    - AI-assisted development findings:
+        1. Function-name collision: internal function and MCP Tool both named `get_security_summary`, causing unintended recursion.
+           Corrected by renaming internal function to `calculate_security_summary()` and keeping MCP Tool as `get_security_summary()`.
+        2. Initialization-order defect: `@server.tool()` decorator applied before `server = MCPServer("CyberSecuritySIEM")` was defined, causing NameError.
+           Corrected by moving decorator after server instantiation.
+        3. Removal of unnecessary HTTP/ASGI imports and `stdio_server` usage in favor of the validated `MCPServer + server.run()` pattern used across the project.
+    - Validation workflow for future MCP Labs:
+        1. AI-assisted implementation
+        2. Static review by the coding agent
+        3. Human code review
+        4. Python syntax/compilation check: `python -m py_compile server.py`
+        5. Module import test: `python -c "import server; print('Import OK')"`
+        6. MCP discovery/connectivity test
+        7. Functional Tool/Resource tests
+        8. Documentation update
+        9. Human review before Git commit
+    - Note: Compilation success does not prove runtime correctness.
+          Import success does not prove MCP functional correctness.
+          MCP connectivity does not prove every Tool or Resource behaves correctly.
+
 ## OpenCode/AI-assisted Development Observations
 - Initial OpenCode-generated code often mixed low-level and high-level MCP APIs; more explicit technical prompts reduced this error.
 - OpenCode sometimes generated incorrect MCP JSON format; configuration must match the installed OpenCode version (e.g., 1.18.27).

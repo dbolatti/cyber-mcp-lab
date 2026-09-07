@@ -28,10 +28,11 @@ Status: Validated
 - dynamic resources
 Status: Completed
 
-## Lab 5 - Write / high-impact tools
-- block_ip
-- isolate_endpoint
-- disable_user
+## Lab 5 - MCP + SIEM
+- Controlled read-only abstraction layer over simulated SIEM dataset
+- Resources: security://siem/events/recent, security://siem/events/{event_id}
+- Tools: search_events, get_security_summary
+Status: Implemented, static validation passed, MCP functional validation pending
 
 ## Lab 6 - MCP security controls
 - authentication
