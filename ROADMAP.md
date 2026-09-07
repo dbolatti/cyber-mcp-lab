@@ -19,7 +19,7 @@ Status: Implemented and MCP integration validated (real API call pending API key
 - check_ip
 - check_hash
 - analyze_log
-Status: Implemented
+Status: Validated
 
 ## Lab 4 - MCP Resources
 - asset inventory

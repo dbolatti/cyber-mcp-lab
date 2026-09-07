@@ -24,10 +24,16 @@
   - Added input validation, timeout handling, sanitized error messages, and response normalization.
   - Real API call pending API key configuration.
 - **Lab 03**:
-  - Implemented `CyberSecurityMultiTool` MCP Server exposing three tools: `check_ip`, `check_hash`, and `analyze_log`.
-  - Used local deterministic logic and simulated data.
-  - Demonstrated tool selection by the LLM/agent.
-  - OpenCode configuration corrected for version 1.18.27 format.
+   - Implemented `CyberSecurityMultiTool` MCP Server exposing three tools: `check_ip`, `check_hash`, and `analyze_log`.
+   - Used local deterministic logic and simulated data.
+   - Demonstrated tool selection by the LLM/agent.
+   - OpenCode configuration corrected for version 1.18.27 format.
+   - Validated reproducibility: successfully cloned/pulled repository and recreated local .venv on a different computer.
+   - MCP server correctly exposed the three tools.
+   - OpenCode using Nemotron 3 Super selected appropriate tools for IP reputation, malware hash, and SSH log analysis requests.
+   - A deliberately ambiguous prompt did not trigger a new MCP tool invocation because the result was already present in conversation context, showing that tool availability does not imply invocation and that LLMs may answer from existing context.
+   - This demonstrates distinctions between tool-derived evidence, conversation context, and LLM-generated inference.
+   - Future research topics: provenance, freshness, context contamination, auditability of agent decisions, evidence versus inference.
 
 ## OpenCode/AI-assisted Development Observations
 - Initial OpenCode-generated code often mixed low-level and high-level MCP APIs; more explicit technical prompts reduced this error.
