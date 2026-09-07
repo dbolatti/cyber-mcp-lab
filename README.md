@@ -10,10 +10,10 @@ The goal of this project is to understand and experiment with the Model Context 
 
 ```mermaid
 graph TD
-    A[MCP Client (e.g., OpenCode)] -->|MCP Protocol| B(CyberSecurityLab MCP Server)
-    B -->|Tool| C[check_ip: Threat Intelligence Lookup]
-    B -->|Resource| D[security://assets: Asset Inventory]
-    B -->|Prompt| E[investigate_ioc: Investigation Guidance]
+    A["MCP Client (e.g., OpenCode)"] -->|MCP Protocol| B["CyberSecurityLab MCP Server"]
+    B -->|Tool| C["check_ip: Threat Intelligence Lookup"]
+    B -->|Resource| D["security://assets: Asset Inventory"]
+    B -->|Prompt| E["investigate_ioc: Investigation Guidance"]
 ```
 
 The server is implemented in Python using the official MCP Python SDK and communicates via stdio transport, making it easy to connect with MCP hosts like OpenCode.
