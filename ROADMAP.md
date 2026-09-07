@@ -13,12 +13,13 @@ Status: Completed
 - Secret handling
 - Error handling
 - API timeout and rate limiting
+Status: Implemented and MCP integration validated (real API call pending API key configuration)
 
 ## Lab 3 - Multiple cybersecurity tools
 - check_ip
 - check_hash
 - analyze_log
-- search_siem
+Status: Implemented
 
 ## Lab 4 - MCP Resources
 - asset inventory
