@@ -98,3 +98,95 @@
 
 These notes accumulate chronologically as we progress through the labs.
 
+## Lab 06 - Multi-MCP
+
+### Architecture
+```
+OpenCode / LLM
+          |
+       MCP Client
+      /          \
+     /            \
+cyber-siem      cyber-ti
+search_events    check_ip
+     \            /
+      \          /
+   evidence fusion
+          |
+    LLM inference
+```
+
+### Functional Experiments and Findings
+
+1. Threat Intelligence selection:
+   Prompt requested reputation for 185.220.101.5.
+   The agent autonomously selected:
+   cyber-ti -> check_ip.
+   Result: malicious, confidence 0.95.
+
+2. SIEM selection:
+   Prompt requested SIEM events involving 185.220.101.5.
+   The agent autonomously selected:
+   cyber-siem -> search_events.
+   Result: evt-001, high severity failed login.
+
+3. Multi-source investigation:
+   The agent correlated SIEM and Threat Intelligence evidence.
+
+4. Autonomous Multi-MCP selection:
+   For 198.51.100.22, without explicitly naming the servers,
+   the agent selected both:
+   cyber-ti -> check_ip
+   cyber-siem -> search_events.
+
+   Threat Intelligence classified the IP as suspicious with
+   confidence 0.80 and the SIEM contained a medium-severity
+   firewall block event.
+
+5. Context reuse finding:
+   During one investigation of 185.220.101.5, the response reused
+   results already present in conversation context and no fresh
+   MCP Tool invocation was observed.
+
+   Record the principle:
+
+   MCP capability availability does not imply MCP invocation.
+
+6. Freshness experiment:
+   A subsequent prompt explicitly required fresh MCP Tool calls
+   and prohibited reuse of previous conversation results.
+
+   The agent then invoked both:
+
+   cyber-siem_search_events
+   cyber-ti_check_ip
+
+   This demonstrates that dynamic or accessible security data does
+   not itself guarantee fresh evidence.
+
+7. Record the security principle:
+
+   In security-sensitive workflows, evidence provenance and
+   freshness must be explicitly controlled. Context reuse may
+   otherwise cause an agent to reason over stale security data.
+
+8. Provenance model:
+
+   Distinguish:
+   - SIEM-provided evidence
+   - Threat-Intelligence-provided evidence
+   - previous conversation context
+   - LLM-generated inference
+
+9. Record one grounding observation:
+   An earlier response described a failed login as an
+   "authenticated failed login attempt", which was not directly
+   supported by the SIEM evidence. A later response correctly used
+   "authentication failure".
+
+   Record this as a minor example of semantic drift during
+   evidence synthesis.
+
+10. Lab 06 remains strictly read-only.
+    No remediation or high-impact capabilities were exposed.
+

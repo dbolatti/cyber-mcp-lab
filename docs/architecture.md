@@ -1,31 +1,32 @@
-# Lab 01 Architecture
+# Lab 06 Architecture
 
-## Components
+## Architecture Diagram
 
-`mermaid
-flowchart TD
-    A[User] -->|Interacts with| B[OpenCode]
-    B -->|Uses LLM| C[LLM]
-    C -->|MCP Client| D[MCP Client (inside OpenCode)]
-    D -->|MCP Protocol| E[CyberSecurityLab MCP Server]
-    E -->|Exposes| F[Tool: check_ip]
-    E -->|Exposes| G[Resource: security://assets]
-    E -->|Exposes| H[Prompt: investigate_ioc]
-`
+```
+                    OpenCode / LLM
+                          |
+                     MCP Client
+                    /          \
+                   /            \
+          cyber-siem          cyber-ti
+         search_events        check_ip
+                   \            /
+                    \          /
+                 evidence fusion
+                       |
+                 LLM inference
+```
 
-### Role of Each Component
+## Component Description
 
-- **User**: The person interacting with the system via OpenCode.
-- **OpenCode**: The IDE/agent that acts as an MCP host. It provides the chat interface, manages the LLM, and includes an MCP client for server communication.
-- **LLM**: The language model (e.g., GPT‑4) that generates text and decides when to invoke tools.
-- **MCP Client**: The component inside OpenCode that connects to MCP servers using the MCP protocol, forwards tool invocations, and returns results.
-- **CyberSecurityLab MCP Server**: The Python server exposing the three MCP primitives:
-  - **Tool check_ip**: Simulated threat‑intelligence lookup.
-  - **Resource security://assets**: Static asset inventory.
-  - **Prompt investigate_ioc**: Guidance for investigating an indicator of compromise.
-- **Cybersecurity services**: In this lab the services are simulated; in later labs they will be real threat‑intelligence feeds, asset databases, etc.
+- **OpenCode / LLM**: The OpenCode interface hosting the language model.
+- **MCP Client**: The MCP client within OpenCode that connects to servers.
+- **cyber-siem**: MCP server providing the `search_events` tool for SIEM data.
+- **cyber-ti**: MCP server providing the `check_ip` tool for threat intelligence.
+- **evidence fusion**: The process of correlating evidence from both servers.
+- **LLM inference**: The language model's reasoning based on fused evidence.
 
 ## Transport
 
-The Lab 01 server uses **stdio transport**, meaning it communicates over standard input and output streams. This is suitable for local development and testing with MCP Inspector or OpenCode.
+stdin/stdout (stdio) transport is used for MCP communication.
 

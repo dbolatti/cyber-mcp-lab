@@ -34,13 +34,13 @@ Status: Completed
 - Tools: search_events, get_security_summary
 Status: Implemented, static validation passed, MCP functional validation pending
 
-## Lab 6 - MCP security controls
-- authentication
-- authorization
-- least privilege
-- approval gates
-- input validation
-- audit logging
+## Lab 6 - Multi-MCP
+- Cyber-siem and cyber-ti MCP servers
+- Autonomous tool selection
+- Evidence fusion
+- LLM inference
+
+Status: Completed
 
 ## Lab 7 - MCP attack scenarios
 - prompt injection

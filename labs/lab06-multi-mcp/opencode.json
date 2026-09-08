@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "cyber-siem": {
+      "type": "local",
+      "command": [
+        ".\\.venv\\Scripts\\python.exe",
+        "siem_server.py"
+      ],
+      "enabled": true
+    },
+    "cyber-ti": {
+      "type": "local",
+      "command": [
+        ".\\.venv\\Scripts\\python.exe",
+        "threat_intel_server.py"
+      ],
+      "enabled": true
+    }
+  }
+}
