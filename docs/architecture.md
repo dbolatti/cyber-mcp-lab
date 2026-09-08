@@ -3,18 +3,18 @@
 ## Architecture Diagram
 
 ```
-                     OpenCode / LLM
-                           |
-                      MCP Client
-                     /          \
-                    /            \
-           cyber-siem          cyber-ti
-          search_events        check_ip
-                    \            /
-                     \          /
-                  evidence fusion
-                        |
-                  LLM inference
+                      OpenCode / LLM
+                            |
+                       MCP Client
+                      /          \
+                     /            \
+            cyber-siem          cyber-ti
+           search_events        check_ip
+                     \            /
+                      \          /
+                   evidence fusion
+                         |
+                   LLM inference
 ```
 
 ## Component Description
@@ -51,3 +51,19 @@ Lab 07 highlighted critical architectural considerations for identity, authentic
 5. **Design implication**: Production MCP implementations must integrate strong authentication (e.g., mutual TLS, JWT) to bind the claimed identity to a cryptographically verified identity before authorization is evaluated.
 
 6. The MCP server’s authorization logic must be independent of the LLM; it should rely solely on server‑side policies and the security context derived from authentication.
+
+## Lab 08 – Authentication and Identity Binding Architecture Lessons
+
+Lab 08 introduced a credential‑based authentication mechanism that separates authentication from authorization, providing the following architectural insights:
+
+1. **Authentication is prerequisite to authorization**. The server first validates the CYBERLAB_TOKEN, derives the identity, and only then evaluates access rights.
+
+2. **Identity is bound to a credential, not to LLM‑provided claims**. Even if the LLM asserts a different identity in a prompt, the server‑side authentication mapping prevents impersonation.
+
+3. **Default‑deny authorization** ensures that an authenticated identity possesses only the permissions explicitly granted (e.g., alice can read events, carol can read summary, bob has none).
+
+4. **Read‑only scope limits the impact** of any potential credential leakage; the MCP server exposes no mutative capabilities.
+
+5. **Separation of concerns**: authentication validates the credential; authorization checks the derived identity against policy. Each can be evolved independently.
+
+These lessons reinforce that secure MCP designs must treat authentication and authorization as distinct, server‑side enforced steps, with identity never sourced from the LLM or prompt text.

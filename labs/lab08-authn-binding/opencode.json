@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "cyber-authn": {
+      "type": "local",
+      "command": [
+        ".\\.venv\\Scripts\\python.exe",
+        "server.py"
+      ],
+      "enabled": true
+    }
+  }
+}

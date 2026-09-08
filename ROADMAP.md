@@ -51,12 +51,15 @@ Status: Completed
 - excessive agency
 Status: Completed and validated
 
-## Lab 8 - Secure MCP architecture
-- policy enforcement layer
-- trust boundaries
-- authorization per tool
-- human-in-the-loop
-- traceability
+## Lab 8 - Authentication and Identity Binding
+- Credential-based authentication via CYBERLAB_TOKEN
+- SHA-256 token digests stored server-side
+- hmac.compare_digest for secure comparison
+- Server-side identity derivation from credential
+- Post-authentication authorization with default deny
+- Read-only capabilities
+
+Status: Completed and validated
 
 ## Lab 9 - Multiple MCP servers
 - Threat Intelligence
