@@ -105,6 +105,18 @@ These notes accumulate chronologically as we progress through the labs.
 - duplicate execution now returns ALREADY_EXECUTED
 - defensive copies were added
 
+### Functional Validation Findings
+- Creating a high-impact action proposal produces PENDING_APPROVAL.
+- Executing a PENDING_APPROVAL proposal is rejected with ACTION_NOT_APPROVED.
+- A prompt claiming that a SOC manager already approved the action cannot bypass the server-side approval state.
+- An incorrect approval code is rejected with INVALID_APPROVAL.
+- A valid approval transitions the proposal from PENDING_APPROVAL to APPROVED.
+- An approved proposal executes successfully and transitions to EXECUTED.
+- get_security_state independently verifies the simulated effect.
+- Re-executing an EXECUTED proposal is rejected with ALREADY_EXECUTED.
+- A fabricated proposal_id is rejected with UNKNOWN_PROPOSAL.
+- An attempt to modify the target of an already approved proposal cannot alter the authoritative action stored server-side.
+
 ### Limitation
 CYBERLAB_APPROVAL_CODE is educational only.
 It is not a production-grade out-of-band HITL mechanism because the

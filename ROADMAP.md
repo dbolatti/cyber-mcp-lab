@@ -67,7 +67,7 @@ Status: Completed and validated
 - Supported simulated actions: block_ip, isolate_host, disable_account
 - Architecture: OBSERVE -> PROPOSE -> APPROVE -> EXECUTE -> VERIFY
 - State machine: PENDING_APPROVAL -> APPROVED -> EXECUTED
-Status: IMPLEMENTED - STATIC VALIDATION PASSED - FUNCTIONAL SECURITY TESTS PENDING
+Status: Completed and validated
 
 ## Lab 10 - Complete architecture
 - OpenCode
