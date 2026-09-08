@@ -67,3 +67,38 @@ Lab 08 introduced a credential‑based authentication mechanism that separates a
 5. **Separation of concerns**: authentication validates the credential; authorization checks the derived identity against policy. Each can be evolved independently.
 
 These lessons reinforce that secure MCP designs must treat authentication and authorization as distinct, server‑side enforced steps, with identity never sourced from the LLM or prompt text.
+
+## Lab 09 – High-Impact Tools, Human-in-the-Loop and Excessive Agency Architecture Lessons
+
+Lab 09 focuses on high-impact tools requiring human-in-the-loop approval to prevent excessive agency. The architecture enforces a clear separation between proposal and execution.
+
+### Architecture
+- **MCP Server**: CyberSecurityResponse
+- **OpenCode MCP Name**: cyber-response
+- **Tools**:
+  - `get_incidents`: Retrieves simulated security incidents.
+  - `get_security_state`: Returns current simulated security state.
+  - `propose_action`: Creates a proposal for a high-impact action (block_ip, isolate_host, disable_account) requiring approval.
+  - `approve_action`: Approves a pending proposal using an approval code.
+  - `execute_action`: Executes an approved proposal (only if approved).
+- **Data Flow**: OBSERVE (get_incidents/get_security_state) -> PROPOSE (propose_action) -> APPROVE (approve_action) -> EXECUTE (execute_action) -> VERIFY (get_incidents/get_security_state)
+- **State Machine**:
+  - PENDING_APPROVAL: After proposal, awaiting approval.
+  - APPROVED: After successful approval.
+  - EXECUTED: After execution.
+- **Supported Simulated Actions**: block_ip, isolate_host, disable_account (all effects are simulated and in-memory).
+
+### Security Design Principles
+- LLM intent is not human approval.
+- Prompt text must not be sufficient to approve an action.
+- Approval is enforced server-side.
+- Execution is allowed only for approved proposals.
+- `execute_action` receives only `proposal_id`.
+- Action type and target come from the stored proposal.
+- Duplicate execution is rejected (returns ALREADY_EXECUTED).
+- All effects are simulated and in-memory.
+- No real firewall, operating-system, account, filesystem, subprocess, or network actions exist.
+
+### Validation Status
+- Static validation passed: Python compilation, Python import, MCP connectivity.
+- Functional security tests are pending.

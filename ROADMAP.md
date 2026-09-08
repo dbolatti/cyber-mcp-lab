@@ -61,11 +61,13 @@ Status: Completed and validated
 
 Status: Completed and validated
 
-## Lab 9 - Multiple MCP servers
-- Threat Intelligence
-- SIEM
-- EDR
-- CMDB
+## Lab 9 - High-Impact Tools, Human-in-the-Loop and Excessive Agency
+- MCP server: CyberSecurityResponse
+- Tools: get_incidents, get_security_state, propose_action, approve_action, execute_action
+- Supported simulated actions: block_ip, isolate_host, disable_account
+- Architecture: OBSERVE -> PROPOSE -> APPROVE -> EXECUTE -> VERIFY
+- State machine: PENDING_APPROVAL -> APPROVED -> EXECUTED
+Status: IMPLEMENTED - STATIC VALIDATION PASSED - FUNCTIONAL SECURITY TESTS PENDING
 
 ## Lab 10 - Complete architecture
 - OpenCode

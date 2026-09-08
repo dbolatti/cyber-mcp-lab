@@ -96,6 +96,21 @@
 
 These notes accumulate chronologically as we progress through the labs.
 
+## Lab 09 - High-Impact Tools, Human-in-the-Loop and Excessive Agency
+
+### Human-Review Findings
+- approval validation order required correction
+- error responses were converted to structured errors
+- execution states were separated
+- duplicate execution now returns ALREADY_EXECUTED
+- defensive copies were added
+
+### Limitation
+CYBERLAB_APPROVAL_CODE is educational only.
+It is not a production-grade out-of-band HITL mechanism because the
+approval credential still travels through an MCP Tool argument controlled
+by the agent.
+
 ## Lab 06 - Multi-MCP
 
 ### Architecture
