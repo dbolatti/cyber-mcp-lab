@@ -49,6 +49,7 @@ Status: Completed
 - tool shadowing
 - confused deputy
 - excessive agency
+Status: Completed and validated
 
 ## Lab 8 - Secure MCP architecture
 - policy enforcement layer
