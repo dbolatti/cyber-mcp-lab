@@ -1,0 +1,29 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "cyber-soc": {
+      "type": "local",
+      "command": [
+        ".\\.venv\\Scripts\\python.exe",
+        "mcp_servers\\cyber-soc\\server.py"
+      ],
+      "enabled": true
+    },
+    "cyber-ti": {
+      "type": "local",
+      "command": [
+        ".\\.venv\\Scripts\\python.exe",
+        "mcp_servers\\cyber-ti\\server.py"
+      ],
+      "enabled": true
+    },
+    "cyber-response": {
+      "type": "local",
+      "command": [
+        ".\\.venv\\Scripts\\python.exe",
+        "mcp_servers\\cyber-response\\server.py"
+      ],
+      "enabled": true
+    }
+  }
+}

@@ -29,6 +29,7 @@ Labs are located in the `labs/` directory and are numbered sequentially to refle
 | Lab 07 | `labs/lab07-identity-authorization` | ✅ Completed and validated | Identity and authorization lab: MCP server enforced authorization server-side; tested alice (events:read) allowed search_events, bob denied; carol (summary:read) allowed get_security_summary, alice denied; unknown identities denied UNKNOWN_IDENTITY; prompt-based authorization bypass attempts failed with ACCESS_DENIED; observed identity-binding limitation where claimed identity influenced authorization; documented security principles and architectural lessons. |
 | Lab 08 | `labs/lab08-identity-binding` | ✅ Completed and validated | Authentication and identity binding: MCP server authenticates via CYBERLAB_TOKEN, derives identity server-side, enforces authorization post-authentication, default deny, read-only capabilities. |
 | Lab 09 | `labs/lab09-hitl-actions` | ✅ Completed and validated | High-Impact Tools, Human-in-the-Loop and Excessive Agency |
+| Lab 10 | `labs/lab10-secure-agentic-soc` | ✅ Implemented and validated | Secure multi-MCP agentic SOC lab with three MCP servers: cyber-soc, cyber-ti, cyber-response. End-to-end workflow: Incident → SOC evidence → Threat Intelligence → correlation/reasoning → proposal → human approval → execution → independent verification. |
 
 ## Setup Instructions
 

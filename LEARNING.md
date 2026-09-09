@@ -123,6 +123,28 @@ It is not a production-grade out-of-band HITL mechanism because the
 approval credential still travels through an MCP Tool argument controlled
 by the agent.
 
+
+## Lab 10 - Secure Agentic SOC
+
+- MCP availability does not imply MCP utilization.
+- Fresh MCP read does not imply fresh underlying evidence.
+- observed_at, data_version, and retrieved_at have different meanings.
+- Capability availability, evidence acquisition, evidence sufficiency, and interpretation are distinct.
+- LLM reasoning must remain distinguishable from authoritative evidence.
+- The agent may introduce unsupported interpretation even when provenance is available.
+- Security-critical state transitions must be enforced server-side, not by the LLM workflow.
+- Human natural-language intent is not authenticated authorization.
+- The agent attempted credential guessing after a natural-language approval statement; record this as excessive agency / credential guessing.
+- Tool schemas can reduce attack surface.
+- Approved action and target must be retrieved from authoritative server-side proposal state.
+- Execution success and independently verified effect are different security properties.
+- Replay, fabricated proposal IDs, pre-approval execution, invalid credentials, and target tampering were successfully blocked.
+- Secure components do not automatically imply secure composition.
+- Agent self-review is not equivalent to independent verification.
+- During Lab 10, initial generated code repeated recursive function-name collisions and generated an incompatible MCP configuration despite explicit self-review instructions; human review caught both defects.
+- The data-layer implementation initially confused data_version with read count; human review corrected the provenance semantics.
+
+
 ## Lab 06 - Multi-MCP
 
 ### Architecture

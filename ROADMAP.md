@@ -69,9 +69,14 @@ Status: Completed and validated
 - State machine: PENDING_APPROVAL -> APPROVED -> EXECUTED
 Status: Completed and validated
 
-## Lab 10 - Complete architecture
-- OpenCode
-- OpenRouter / model provider
-- multiple LLMs
-- multiple MCP servers
-- secure orchestration
+## Lab 10 - Secure Agentic SOC
+- Multi-MCP SOC lab with servers: cyber-soc, cyber-ti, cyber-response
+- End-to-end workflow: Incident → SOC evidence → Threat Intelligence → correlation/reasoning → proposal → human approval → execution → independent verification
+Status: Completed and validated
+
+Future work:
+- stale context and provenance
+- fabricated or conflicting evidence
+- cross-MCP trust and attestation
+- stronger out-of-band HITL authorization
+- security of multi-agent or multi-MCP composition

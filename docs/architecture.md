@@ -102,3 +102,33 @@ Lab 09 focuses on high-impact tools requiring human-in-the-loop approval to prev
 ### Validation Status
 - Static validation passed: Python compilation, Python import, MCP connectivity.
 - Functional security tests passed and validated.
+
+## Lab 10 – Secure Agentic SOC Architecture Lessons
+
+Lab 10 demonstrates a secure multi-MCP agentic Security Operations Center (SOC) composed of three MCP servers: cyber-soc, cyber-ti, and cyber-response. The architecture highlights trust boundaries and the role of OpenCode/LLM as an orchestrator rather than a security enforcement point.
+
+### Architecture
+- **MCP Servers**:
+  - `cyber-soc`: Provides SOC evidence ingestion and initial triage (e.g., `get_incidents`, `add_evidence`).
+  - `cyber-ti`: Offers threat intelligence lookup (e.g., `check_ip`, `check_hash`).
+  - `cyber-response`: Owns the authoritative proposal finite‑state machine (FSM) and simulated response state; exposes `propose_action`, `approve_action`, `execute_action`, and `get_proposal_state`.
+- **OpenCode / LLM**: Acts as the orchestrator that sequences observations, correlates evidence, generates proposals, and requests human approval, but does not enforce security‑critical transitions.
+- **Data Flow**: 
+  1. Observe – retrieve incidents from cyber-soc and enrich with cyber-ti.
+  2. Correlate & Reason – LLM synthesizes evidence and drafts a proposal via cyber-response `propose_action`.
+  3. Approve – Human reviews and supplies approval code to cyber-response `approve_action`.
+  4. Execute – Cyber-response `execute_action` runs the approved action.
+  5. Verify – Independent verification by re‑querying cyber-soc and cyber-ti to confirm effect.
+- **Trust Boundaries**: 
+  - Each MCP server enforces its own access controls and validates inputs server‑side.
+  - The LLM never directly modifies state; it only influences proposals through trusted tool calls.
+  - Provenance between independent MCP servers is not cryptographically attested in the current lab; trust relies on server‑side validation and audit logs.
+
+### Security Design Principles
+- Security‑critical state transitions (e.g., moving from PENDING_APPROVAL to EXECUTED) are enforced solely by the cyber-response MCP server.
+- Human natural‑language intent is not sufficient for authorization; approval requires a server‑validated code.
+- Action details (type, target) are retrieved from the authoritative proposal state stored in cyber-response, not from LLM‑provided parameters.
+- Execution success and independently verified effect are distinct; verification must query separate evidence sources.
+- The lab demonstrated resilience against replay, fabricated proposal IDs, pre‑approval execution, invalid credentials, and target tampering.
+- Secure individual components do not guarantee secure composition; cross‑MCP trust and attestation are needed for stronger guarantees.
+- Agent self‑review or internal validation does not replace independent verification by separate MCP servers or human review.
