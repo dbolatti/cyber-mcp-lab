@@ -63,3 +63,24 @@ Once the server is running, you can use the MCP tool in OpenCode:
 ## Notes
 - Do not make real requests to AbuseIPDB during development without a valid API key.
 - The server is designed to be run locally via stdio for MCP integration.
+
+## Lab Status
+**Validated/Completed**  
+The following were successfully verified:
+- Python syntax validation
+- Successful server import
+- MCP connectivity through OpenCode
+- Real AbuseIPDB API integration
+- Successful lookup of 185.220.101.5
+- Normalized threat intelligence response
+- API key remained server-side and was not exposed through the MCP result
+- Invalid IP input was rejected locally before an external API call
+
+**Architectural Flow:**
+OpenCode
+→ MCP
+→ cyber-threat-intel server
+→ AbuseIPDB API
+→ normalized response
+→ MCP
+→ OpenCode

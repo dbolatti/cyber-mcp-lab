@@ -1,18 +1,20 @@
 # Lab 05: Simulated SIEM Integration via MCP
 
+Status: VALIDATED / COMPLETED
+
 ## Lab Objective
 Build a simulated SIEM integration through MCP to demonstrate that an AI agent should not require direct access to a SIEM backend. The MCP Server exposes a controlled, structured interface to security events.
 
 ## Architecture
 ```
 OpenCode / LLM
-      |
-   MCP Client
-      |
-      v
+       |
+    MCP Client
+       |
+       v
 CyberSecuritySIEM MCP Server
-      |
-      v
+       |
+       v
 Simulated SIEM dataset
 ```
 
@@ -95,3 +97,23 @@ get_security_summary()
 ## Uncertainties
 - The exact version of the MCP SDK that provides `mcp.server.MCPServer` and `stdio_server`.
 - Whether additional dependencies like starlette are required (they may be transitive).
+
+## Validation
+- Python syntax compilation: PASS
+- Python server import: PASS
+- MCP server connection through OpenCode: PASS
+- get_security_summary tool: PASS
+- search_events with severity=high: PASS
+- MCP resource discovery: PASS
+- read security://siem/events/evt005: PASS
+- consistency with the simulated SIEM dataset: PASS
+- read-only SIEM behavior: PASS
+
+## Validated Architecture
+OpenCode
+→ MCP
+→ cyber-siem
+→ simulated SIEM dataset
+→ Tools / Resources
+→ MCP
+→ OpenCode

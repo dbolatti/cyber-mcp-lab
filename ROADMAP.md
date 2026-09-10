@@ -13,7 +13,7 @@ Status: Completed
 - Secret handling
 - Error handling
 - API timeout and rate limiting
-Status: Implemented and MCP integration validated (real API call pending API key configuration)
+Status: Completed and validated
 
 ## Lab 3 - Multiple cybersecurity tools
 - check_ip
@@ -32,7 +32,7 @@ Status: Completed
 - Controlled read-only abstraction layer over simulated SIEM dataset
 - Resources: security://siem/events/recent, security://siem/events/{event_id}
 - Tools: search_events, get_security_summary
-Status: Implemented, static validation passed, MCP functional validation pending
+Status: Completed and validated
 
 ## Lab 6 - Multi-MCP
 - Cyber-siem and cyber-ti MCP servers
@@ -73,6 +73,10 @@ Status: Completed and validated
 - Multi-MCP SOC lab with servers: cyber-soc, cyber-ti, cyber-response
 - End-to-end workflow: Incident → SOC evidence → Threat Intelligence → correlation/reasoning → proposal → human approval → execution → independent verification
 Status: Completed and validated
+
+The MCP lab sequence (Labs 01-10) is now complete.
+
+
 
 Future work:
 - stale context and provenance
