@@ -19,9 +19,9 @@ This document captures the architectural evolution of the cyber-mcp-lab reposito
 - Tool availability does **not** imply automatic invocation; the LLM decides when to call a Tool.
 
 ### Lab 04 – Resources and Templates
-- Servers expose **Resources** via MCP URIs (e.g., `cyber://assets`, `cyber://assets/{id}`, `cyber://events/recent`, `cyber://runtime/session`).
+- Servers expose **Resources** via MCP URIs (e.g., `security://assets`, `security://assets/{asset_id}`, `security://runtime/session`, `security://events/recent`).
 - **Resource templates** allow pattern‑based URIs.
-- **Dynamic resources** compute URIs at runtime but do **not** guarantee a fresh read; they may be cached.
+- A dynamic Resource may return different data when it is read, but this does not guarantee that the Host or LLM performs a fresh Resource read every time it reasons about that Resource.
 
 ### Lab 05 – Read‑Only SIEM Integration
 - One MCP server provides read‑only access to a SIEM:
