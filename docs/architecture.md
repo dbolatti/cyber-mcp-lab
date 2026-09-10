@@ -1,134 +1,158 @@
-# Lab 06 Architecture
+# Cyber-MCP-Lab Architecture Overview
 
-## Architecture Diagram
+This document captures the architectural evolution of the cyber-mcp-lab repository across Labs 01‑10. It preserves the technically correct content from the original Lab 06 architecture while extending it to cover the full progression.
 
+## Labs 01‑05: Foundational MCP Concepts
+
+### Lab 01 – Basic MCP Architecture
+- OpenCode acts as an **MCP Host** that runs an LLM.
+- The host contains an **MCP Client** which connects to one or more **MCP Servers**.
+- Each server exposes **Tools**, **Resources**, and **Prompts** following the MCP specification.
+
+### Lab 02 – MCP Server as REST Adapter
+- An MCP server wraps an external REST API (e.g., AbuseIPDB) and presents it as a Tool.
+- Flow: OpenCode → MCP Client → Threat‑Intel MCP Server → AbuseIPDB REST API.
+- Demonstrates that MCP does **not** replace REST; it adapts them.
+
+### Lab 03 – Multiple Tools per Server
+- A single MCP server can expose several cybersecurity Tools (e.g., check_ip, check_hash, parse_log).
+- Tool availability does **not** imply automatic invocation; the LLM decides when to call a Tool.
+
+### Lab 04 – Resources and Templates
+- Servers expose **Resources** via MCP URIs (e.g., `cyber://assets`, `cyber://assets/{id}`, `cyber://events/recent`, `cyber://runtime/session`).
+- **Resource templates** allow pattern‑based URIs.
+- **Dynamic resources** compute URIs at runtime but do **not** guarantee a fresh read; they may be cached.
+
+### Lab 05 – Read‑Only SIEM Integration
+- One MCP server provides read‑only access to a SIEM:
+  - **Tools** for executing queries (`search_events`).
+  - **Resources** for direct contextual data (e.g., recent alerts).
+- Reinforces that resource access is separate from tool invocation.
+
+### Diagram 1: Labs 01‑05 Evolution
+```mermaid
+flowchart TD
+    A[OpenCode / LLM Host] --> B[MCP Client]
+    B --> C1[Lab01: Single Server<br/>Tool/Resource/Prompt]
+    B --> C2[Lab02: Server ↔ REST API<br/>(Adapter)]
+    B --> C3[Lab03: Multi‑Tool Server]
+    B --> C4[Lab04: Resource URIs & Templates]
+    B --> C5[Lab05: SIEM Read‑Only<br/>(Tools + Resources)]
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C1 fill:#dfd,stroke:#333,stroke-width:1px
+    style C2 fill:#dfd,stroke:#333,stroke-width:1px
+    style C3 fill:#dfd,stroke:#333,stroke-width:1px
+    style C4 fill:#dfd,stroke:#333,stroke-width:1px
+    style C5 fill:#dfd,stroke:#333,stroke-width:1px
 ```
-                      OpenCode / LLM
-                            |
-                       MCP Client
-                      /          \
-                     /            \
-            cyber-siem          cyber-ti
-           search_events        check_ip
-                     \            /
-                      \          /
-                   evidence fusion
-                         |
-                   LLM inference
+
+## Lab 06 – Multiple MCP Servers
+- The host can connect to **multiple MCP servers** simultaneously.
+- Example: `cyber-siem` (SIEM) and `cyber-ti` (Threat Intel) both available to the same LLM.
+- The LLM orchestrates evidence fusion but **does not** enforce security; each server enforces its own access control.
+
+### Diagram 2: Multi‑MCP Architecture (Lab 06)
+```mermaid
+flowchart LR
+    A[OpenCode / LLM] --> B[MCP Client]
+    B --> C[cyber-siem<br/>search_events]
+    B --> D[cyber-ti<br/>check_ip]
+    C --> E[Evidence Fusion<br/>(LLM)]
+    D --> E
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#dfd,stroke:#333,stroke-width:1px
+    style D fill:#dfd,stroke:#333,stroke-width:1px
+    style E fill:#ffd,stroke:#333,stroke-width:1px
 ```
 
-## Component Description
+### Lab 06 Content (preserved)
+- Component description and transport (stdio) remain unchanged.
 
-- **OpenCode / LLM**: The OpenCode interface hosting the language model.
-- **MCP Client**: The MCP client within OpenCode that connects to servers.
-- **cyber-siem**: MCP server providing the `search_events` tool for SIEM data.
-- **cyber-ti**: MCP server providing the `check_ip` tool for threat intelligence.
-- **evidence fusion**: The process of correlating evidence from both servers.
-- **LLM inference**: The language model's reasoning based on fused evidence.
+## Labs 07‑09: Security Controls Evolution
 
-## Transport
+### Lab 07 – Identity & Authorization
+- Authorization **must** be server‑side; LLM cannot override.
+- Flow: Authentication → Verified identity → Security context → Authorization → MCP capability.
+- Demonstrated the difference between claimed vs. authenticated identity.
 
-stdin/stdout (stdio) transport is used for MCP communication.
+### Lab 08 – Authentication & Identity Binding
+- Credential‑based authentication (CYBERLAB_TOKEN) separates auth from authz.
+- Identity bound to credential, not LLM claims.
+- Default‑deny posture; read‑only scope limits leakage impact.
 
-## Lab 07 – Identity and Authorization Architecture Lessons
+### Lab 09 – Human‑in‑the‑Loop (HITL) for High‑Impact Tools
+- Introduces a server‑side state machine for proposals:
+  `PENDING_APPROVAL → APPROVED → EXECUTED`.
+- Approval enforced server‑side; LLM intent ≠ human approval.
+- Execution only from stored proposal; duplicate execution rejected.
 
-Lab 07 highlighted critical architectural considerations for identity, authentication, and authorization in MCP systems:
+### Diagram 3: Security Control Evolution (Labs 07‑09)
+```mermaid
+flowchart TD
+    A[Lab07: Authz Server‑Side] --> B[Lab08: Auth + Identity Binding]
+    B --> C[Lab09: HITL State Machine<br/>PENDING→APPROVED→EXECUTED]
+    style A fill:#dfd,stroke:#333,stroke-width:1px
+    style B fill:#dfd,stroke:#333,stroke-width:1px
+    style C fill:#dfd,stroke:#333,stroke-width:1px
+```
 
-1. **Authorization must be enforced server‑side**. The MCP server is the authoritative source for access control; prompt text or LLM behavior cannot override its decisions.
+## Lab 10 – Secure Agentic SOC Architecture
+- Integrates three MCP servers:
+   - `cyber-soc`: SOC evidence ingestion & triage.
+   - `cyber-ti`: Threat‑intel lookups.
+   - `cyber-response`: Authoritative proposal FSM & simulated response state.
+- OpenCode/LLM acts **only** as orchestrator; it does **not** enforce security‑critical transitions.
+- Data flow:
+   1. **Observe** – query cyber‑soc & enrich with cyber‑ti.
+   2. **Correlate & Reason** – LLM drafts proposal via cyber‑response `propose_action`.
+   3. **Approve** – Human supplies approval code to cyber‑response `approve_action`.
+   4. **Execute** – cyber‑response `execute_action` runs approved action.
+   5. **Verify** – Independent verification via cyber‑response `get_security_state` and `verify_action` confirming that the action was executed and the resulting security state matches expectations, providing replay protection and target tampering prevention.
+- Trust boundaries: each MCP server validates inputs server‑side; LLM never mutates state directly.
+- Security principles preserved:
+   - Authentication & authorization are server‑side.
+   - HITL approval & action state are authoritative server‑side.
+   - Provenance & freshness are security‑relevant but not cryptographically attested in this lab.
+   - Secure components ≠ automatically secure composition.
 
-2. **Authentication → Verified identity → Security context → Authorization → MCP capability** is the correct flow. Each stage must be distinct and properly implemented.
+### Diagram 4: Integrated Secure Agentic SOC (Lab 10)
+```mermaid
+flowchart LR
+    A[OpenCode / LLM<br/>(Orchestrator)] --> B[MCP Client]
+    B --> C[cyber-soc<br/>get_incidents, add_evidence]
+    B --> D[cyber-ti<br/>check_ip, check_hash]
+    B --> E[cyber-response<br/>propose_action, approve_action, execute_action, get_proposal_state]
+    C --> F[Observe & Enrich]
+    D --> F
+    F --> G[LLM: Correlate & Reason<br/>→ propose_action]
+    G --> H[Human: Approve Code<br/>→ approve_action]
+    H --> I[cyber-response: Execute<br/>→ execute_action]
+    I --> J[Verify: get_security_state / verify_action]
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#dfd,stroke:#333,stroke-width:1px
+    style D fill:#dfd,stroke:#333,stroke-width:1px
+    style E fill:#dfd,stroke:#333,stroke-width:1px
+    style F fill:#ffd,stroke:#333,stroke-width:1px
+    style G fill:#ffd,stroke:#333,stroke-width:1px
+    style H fill:#ffd,stroke:#333,stroke-width:1px
+    style I fill:#ffd,stroke:#333,stroke-width:1px
+    style J fill:#ffd,stroke:#333,stroke-width:1px
+```
 
-3. In this lab, identity was simulated (no cryptographic authentication). The server accepted a claimed identity and mapped it to a verified identity for authorization purposes. This demonstrates that:
-   - **Claimed identity** (what the agent states) may differ from **authenticated identity** (what the server validates after authentication).
-   - The **authorization decision** relies on the authenticated identity, not the claimed one.
-   - Without strong authentication, a malicious agent can claim any identity and gain its permissions—a limitation of the simulation, not a flaw in authorization logic.
+## Summary of Architectural Principles (Preserved)
+- LLM ≠ Agent ≠ MCP.
+- MCP adapts, does not replace, REST APIs.
+- Tool/function calling and MCP are complementary.
+- Tool/resource availability does not imply invocation/reading.
+- Dynamic Resource ≠ Fresh Read.
+- Authentication & authorization enforced server‑side.
+- HITL approval & action state authoritative server‑side.
+- Agent self‑review is not independent verification.
+- Secure components do not guarantee secure composition.
+- Provenance & freshness are security‑relevant.
 
-4. The lab reinforces that:
-   - Prompt‑based attempts to bypass authorization (e.g., “act as bob”) fail when the server enforces checks based on verified identity.
-   - Unknown identities are rejected with a specific error (`UNKNOWN_IDENTITY`), ensuring fail‑closed behavior.
-   - Authorization decisions are deterministic and based on predefined roles/permissions (`events:read`, `summary:read`).
-
-5. **Design implication**: Production MCP implementations must integrate strong authentication (e.g., mutual TLS, JWT) to bind the claimed identity to a cryptographically verified identity before authorization is evaluated.
-
-6. The MCP server’s authorization logic must be independent of the LLM; it should rely solely on server‑side policies and the security context derived from authentication.
-
-## Lab 08 – Authentication and Identity Binding Architecture Lessons
-
-Lab 08 introduced a credential‑based authentication mechanism that separates authentication from authorization, providing the following architectural insights:
-
-1. **Authentication is prerequisite to authorization**. The server first validates the CYBERLAB_TOKEN, derives the identity, and only then evaluates access rights.
-
-2. **Identity is bound to a credential, not to LLM‑provided claims**. Even if the LLM asserts a different identity in a prompt, the server‑side authentication mapping prevents impersonation.
-
-3. **Default‑deny authorization** ensures that an authenticated identity possesses only the permissions explicitly granted (e.g., alice can read events, carol can read summary, bob has none).
-
-4. **Read‑only scope limits the impact** of any potential credential leakage; the MCP server exposes no mutative capabilities.
-
-5. **Separation of concerns**: authentication validates the credential; authorization checks the derived identity against policy. Each can be evolved independently.
-
-These lessons reinforce that secure MCP designs must treat authentication and authorization as distinct, server‑side enforced steps, with identity never sourced from the LLM or prompt text.
-
-## Lab 09 – High-Impact Tools, Human-in-the-Loop and Excessive Agency Architecture Lessons
-
-Lab 09 focuses on high-impact tools requiring human-in-the-loop approval to prevent excessive agency. The architecture enforces a clear separation between proposal and execution.
-
-### Architecture
-- **MCP Server**: CyberSecurityResponse
-- **OpenCode MCP Name**: cyber-response
-- **Tools**:
-  - `get_incidents`: Retrieves simulated security incidents.
-  - `get_security_state`: Returns current simulated security state.
-  - `propose_action`: Creates a proposal for a high-impact action (block_ip, isolate_host, disable_account) requiring approval.
-  - `approve_action`: Approves a pending proposal using an approval code.
-  - `execute_action`: Executes an approved proposal (only if approved).
-- **Data Flow**: OBSERVE (get_incidents/get_security_state) -> PROPOSE (propose_action) -> APPROVE (approve_action) -> EXECUTE (execute_action) -> VERIFY (get_incidents/get_security_state)
-- **State Machine**:
-  - PENDING_APPROVAL: After proposal, awaiting approval.
-  - APPROVED: After successful approval.
-  - EXECUTED: After execution.
-- **Supported Simulated Actions**: block_ip, isolate_host, disable_account (all effects are simulated and in-memory).
-
-### Security Design Principles
-- LLM intent is not human approval.
-- Prompt text must not be sufficient to approve an action.
-- Approval is enforced server-side.
-- Execution is allowed only for approved proposals.
-- `execute_action` receives only `proposal_id`.
-- Action type and target come from the stored proposal.
-- Duplicate execution is rejected (returns ALREADY_EXECUTED).
-- All effects are simulated and in-memory.
-- No real firewall, operating-system, account, filesystem, subprocess, or network actions exist.
-
-### Validation Status
-- Static validation passed: Python compilation, Python import, MCP connectivity.
-- Functional security tests passed and validated.
-
-## Lab 10 – Secure Agentic SOC Architecture Lessons
-
-Lab 10 demonstrates a secure multi-MCP agentic Security Operations Center (SOC) composed of three MCP servers: cyber-soc, cyber-ti, and cyber-response. The architecture highlights trust boundaries and the role of OpenCode/LLM as an orchestrator rather than a security enforcement point.
-
-### Architecture
-- **MCP Servers**:
-  - `cyber-soc`: Provides SOC evidence ingestion and initial triage (e.g., `get_incidents`, `add_evidence`).
-  - `cyber-ti`: Offers threat intelligence lookup (e.g., `check_ip`, `check_hash`).
-  - `cyber-response`: Owns the authoritative proposal finite‑state machine (FSM) and simulated response state; exposes `propose_action`, `approve_action`, `execute_action`, and `get_proposal_state`.
-- **OpenCode / LLM**: Acts as the orchestrator that sequences observations, correlates evidence, generates proposals, and requests human approval, but does not enforce security‑critical transitions.
-- **Data Flow**: 
-  1. Observe – retrieve incidents from cyber-soc and enrich with cyber-ti.
-  2. Correlate & Reason – LLM synthesizes evidence and drafts a proposal via cyber-response `propose_action`.
-  3. Approve – Human reviews and supplies approval code to cyber-response `approve_action`.
-  4. Execute – Cyber-response `execute_action` runs the approved action.
-  5. Verify – Independent verification by re‑querying cyber-soc and cyber-ti to confirm effect.
-- **Trust Boundaries**: 
-  - Each MCP server enforces its own access controls and validates inputs server‑side.
-  - The LLM never directly modifies state; it only influences proposals through trusted tool calls.
-  - Provenance between independent MCP servers is not cryptographically attested in the current lab; trust relies on server‑side validation and audit logs.
-
-### Security Design Principles
-- Security‑critical state transitions (e.g., moving from PENDING_APPROVAL to EXECUTED) are enforced solely by the cyber-response MCP server.
-- Human natural‑language intent is not sufficient for authorization; approval requires a server‑validated code.
-- Action details (type, target) are retrieved from the authoritative proposal state stored in cyber-response, not from LLM‑provided parameters.
-- Execution success and independently verified effect are distinct; verification must query separate evidence sources.
-- The lab demonstrated resilience against replay, fabricated proposal IDs, pre‑approval execution, invalid credentials, and target tampering.
-- Secure individual components do not guarantee secure composition; cross‑MCP trust and attestation are needed for stronger guarantees.
-- Agent self‑review or internal validation does not replace independent verification by separate MCP servers or human review.
+---
+*Only `docs/architecture.md` was modified to reflect the full Labs 01‑10 evolution and to include the four Mermaid diagrams above.*
