@@ -32,12 +32,12 @@ This document captures the architectural evolution of the cyber-mcp-lab reposito
 ### Diagram 1: Labs 01‑05 Evolution
 ```mermaid
 flowchart TD
-    A[OpenCode / LLM Host] --> B[MCP Client]
-    B --> C1[Lab01: Single Server<br/>Tool/Resource/Prompt]
-    B --> C2[Lab02: Server ↔ REST API<br/>(Adapter)]
-    B --> C3[Lab03: Multi‑Tool Server]
-    B --> C4[Lab04: Resource URIs & Templates]
-    B --> C5[Lab05: SIEM Read‑Only<br/>(Tools + Resources)]
+    A["OpenCode / LLM Host"] --> B["MCP Client"]
+    B --> C1["Lab01: Single Server<br/>Tool/Resource/Prompt"]
+    B --> C2["Lab02: REST API Adapter<br/>AbuseIPDB"]
+    B --> C3["Lab03: Multi‑Tool Server"]
+    B --> C4["Lab04: Resource URIs & Templates"]
+    B --> C5["Lab05: SIEM Read‑Only<br/>(Tools + Resources)"]
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style C1 fill:#dfd,stroke:#333,stroke-width:1px
@@ -55,10 +55,10 @@ flowchart TD
 ### Diagram 2: Multi‑MCP Architecture (Lab 06)
 ```mermaid
 flowchart LR
-    A[OpenCode / LLM] --> B[MCP Client]
-    B --> C[cyber-siem<br/>search_events]
-    B --> D[cyber-ti<br/>check_ip]
-    C --> E[Evidence Fusion<br/>(LLM)]
+    A["OpenCode / LLM"] --> B["MCP Client"]
+    B --> C["cyber-siem<br/>search_events"]
+    B --> D["cyber-ti<br/>check_ip"]
+    C --> E["Evidence Fusion<br/>(LLM)"]
     D --> E
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
@@ -91,8 +91,8 @@ flowchart LR
 ### Diagram 3: Security Control Evolution (Labs 07‑09)
 ```mermaid
 flowchart TD
-    A[Lab07: Authz Server‑Side] --> B[Lab08: Auth + Identity Binding]
-    B --> C[Lab09: HITL State Machine<br/>PENDING→APPROVED→EXECUTED]
+    A["Lab07: Authz Server-Side"] --> B["Lab08: Auth + Identity Binding"]
+    B --> C["Lab09: HITL State Machine<br/>PENDING->APPROVED->EXECUTED"]
     style A fill:#dfd,stroke:#333,stroke-width:1px
     style B fill:#dfd,stroke:#333,stroke-width:1px
     style C fill:#dfd,stroke:#333,stroke-width:1px
@@ -100,36 +100,36 @@ flowchart TD
 
 ## Lab 10 – Secure Agentic SOC Architecture
 - Integrates three MCP servers:
-   - `cyber-soc`: SOC evidence ingestion & triage.
-   - `cyber-ti`: Threat‑intel lookups.
-   - `cyber-response`: Authoritative proposal FSM & simulated response state.
+    - `cyber-soc`: SOC evidence ingestion & triage.
+    - `cyber-ti`: Threat‑intel lookups.
+    - `cyber-response`: Authoritative proposal FSM & simulated response state.
 - OpenCode/LLM acts **only** as orchestrator; it does **not** enforce security‑critical transitions.
 - Data flow:
-   1. **Observe** – query cyber‑soc & enrich with cyber‑ti.
-   2. **Correlate & Reason** – LLM drafts proposal via cyber‑response `propose_action`.
-   3. **Approve** – Human supplies approval code to cyber‑response `approve_action`.
-   4. **Execute** – cyber‑response `execute_action` runs approved action.
-   5. **Verify** – Independent verification via cyber‑response `get_security_state` and `verify_action` confirming that the action was executed and the resulting security state matches expectations, providing replay protection and target tampering prevention.
+    1. **Observe** – query cyber‑soc & enrich with cyber‑ti.
+    2. **Correlate & Reason** – LLM drafts proposal via cyber‑response `propose_action`.
+    3. **Approve** – Human supplies approval code to cyber‑response `approve_action`.
+    4. **Execute** – cyber‑response `execute_action` runs approved action.
+    5. **Verify** – Independent verification via cyber‑response `get_security_state` and `verify_action` confirming that the action was executed and the resulting security state matches expectations, providing replay protection and target tampering prevention.
 - Trust boundaries: each MCP server validates inputs server‑side; LLM never mutates state directly.
 - Security principles preserved:
-   - Authentication & authorization are server‑side.
-   - HITL approval & action state are authoritative server‑side.
-   - Provenance & freshness are security‑relevant but not cryptographically attested in this lab.
-   - Secure components ≠ automatically secure composition.
+    - Authentication & authorization are server‑side.
+    - HITL approval & action state are authoritative server‑side.
+    - Provenance & freshness are security‑relevant but not cryptographically attested in this lab.
+    - Secure components ≠ automatically secure composition.
 
 ### Diagram 4: Integrated Secure Agentic SOC (Lab 10)
 ```mermaid
 flowchart LR
-    A[OpenCode / LLM<br/>(Orchestrator)] --> B[MCP Client]
-    B --> C[cyber-soc<br/>get_incidents, add_evidence]
-    B --> D[cyber-ti<br/>check_ip, check_hash]
-    B --> E[cyber-response<br/>propose_action, approve_action, execute_action, get_proposal_state]
-    C --> F[Observe & Enrich]
+    A["OpenCode / LLM<br/>(Orchestrator)"] --> B["MCP Client"]
+    B --> C["cyber-soc<br/>get_incidents, add_evidence"]
+    B --> D["cyber-ti<br/>check_ip, check_hash"]
+    B --> E["cyber-response<br/>propose_action, approve_action, execute_action, get_proposal_state"]
+    C --> F["Observe & Enrich"]
     D --> F
-    F --> G[LLM: Correlate & Reason<br/>→ propose_action]
-    G --> H[Human: Approve Code<br/>→ approve_action]
-    H --> I[cyber-response: Execute<br/>→ execute_action]
-    I --> J[Verify: get_security_state / verify_action]
+    F --> G["LLM: Correlate & Reason<br/>-> propose_action"]
+    G --> H["Human: Approve Code<br/>-> approve_action"]
+    H --> I["cyber-response: Execute<br/>-> execute_action"]
+    I --> J["Verify: get_security_state / verify_action"]
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style C fill:#dfd,stroke:#333,stroke-width:1px
@@ -156,3 +156,4 @@ flowchart LR
 
 ---
 *Only `docs/architecture.md` was modified to reflect the full Labs 01‑10 evolution and to include the four Mermaid diagrams above.*
+
